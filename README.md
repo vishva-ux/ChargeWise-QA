@@ -154,120 +154,154 @@ chargewise-qa-automation/
 
 ---
 
-## 🚀 4. Quick Start & Setup
+## 🚀 4. Step-by-Step Guide: How to Run the Projects
 
-### Prerequisites
-- Python 3.10+ installed
-- Google Chrome browser installed
-- Git installed
-- Java Runtime (Optional, for running Apache JMeter)
-- Allure CLI (Optional, for generating HTML report: `brew install allure` or `npm install -g allure-commandline`)
+### 🅰️ Part 1: Starting the ChargeWise Application (System Under Test)
 
-### 1. Clone & Set Up Environment
+Before running the QA test suites, start the ChargeWise services you wish to test.
 
+#### 1. Start the Frontend Application (Port 3000)
+Open a terminal in the root `ChargeWise AI` parent folder:
 ```bash
-# Clone the QA repository
-git clone https://github.com/vishva-ux/ChargeWise-QA.git
-cd ChargeWise-QA
-
-# Create and activate Python virtual environment
-python3 -m venv venv
-source venv/bin/activate
-
-# Install all test dependencies
-pip install -r requirements.txt
+cd "ChargeWise AI/frontend"
+npm install
+npm run dev
 ```
+> The Frontend will be available at: **`http://localhost:3000`**
 
-### 2. Configure Test Targets
-
-Copy `.env.example` to `.env` and adjust the URLs according to your local or deployed environment:
-
+#### 2. Start the Machine Learning Microservice (Port 8000)
+In a second terminal window:
 ```bash
-cp .env.example .env
+cd "ChargeWise AI"
+PYTHONPATH="." ml_service/venv/bin/python -m uvicorn ml_service.api.main:app --host 0.0.0.0 --port 8000
 ```
+> Verify health check: Open **`http://localhost:8000/health`** in browser (returns `{"status":"healthy"}`).
 
-Key environment variables:
-```ini
-CHARGEWISE_BASE_URL=http://localhost:3000
-CHARGEWISE_API_URL=http://localhost:8080/api/v1
-CHARGEWISE_ML_URL=http://localhost:8000
-SELENIUM_HEADLESS=true
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=chargewise_db
-DB_USER=postgres
-DB_PASSWORD=postgrespassword
+#### 3. Start Core Backend & Database (Docker Compose - Optional)
+If Docker is running on your machine:
+```bash
+cd "ChargeWise AI"
+docker-compose up -d postgres redis backend
 ```
 
 ---
 
-## 🧪 5. Running Automated Tests
+### 🅱️ Part 2: Setting Up & Running the QA Automation Project
 
-### Run All Tests
+Open a new terminal window inside the QA project directory:
 ```bash
-pytest
+cd "ChargeWise AI/ChargeWise-QA"
 ```
 
-### Run by Specific Test Layer
+#### Step 1: Create Virtual Environment & Install QA Dependencies
 ```bash
-# 1. Run REST API Tests
-pytest api/tests -v -m "api"
+# Create virtual environment
+python3 -m venv venv
 
-# 2. Run UI Automation Tests (Headless Chrome)
-pytest ui/tests -v -m "ui"
+# Activate virtual environment
+# On macOS / Linux:
+source venv/bin/activate
+# On Windows:
+# venv\Scripts\activate
 
-# 3. Run Database Integrity Tests
-pytest database/tests -v -m "db"
-
-# 4. Run End-to-End User Journeys
-pytest e2e/tests -v -m "e2e"
+# Install testing dependencies
+pip install -r requirements.txt
 ```
 
-### Run Smoke or Critical Suites
+#### Step 2: Configure Environment Variables
+Copy the example environment file:
 ```bash
-# Run Smoke Sanity Tests
+cp .env.example .env
+```
+*(Default values are already pre-configured for `http://localhost:3000`, `http://localhost:8000`, and `http://localhost:8080`)*
+
+---
+
+### 🧪 Part 3: Running Automated Test Suites
+
+Ensure your virtual environment is active (`source venv/bin/activate`).
+
+#### 1. Run UI Automation Tests (Selenium WebDriver POM)
+Executes Chrome browser automation against the live Next.js app:
+```bash
+# Run all UI tests
+pytest ui/tests -v
+
+# Run specific UI modules
+pytest ui/tests/test_stations.py -v   # Tests station listing & AI filter
+pytest ui/tests/test_booking.py -v    # Tests slot reservation & QR pass
+pytest ui/tests/test_login.py -v      # Tests driver login modal
+```
+> **Tip:** To see the real Chrome browser window open visually during testing, set `SELENIUM_HEADLESS=false` in `.env`.
+
+#### 2. Run REST API & ML Model Tests
+Executes HTTP contract and validation tests against the FastAPI & Spring Boot microservices:
+```bash
+# Run ML microservice tests (:8000)
+pytest api/tests/test_ml_service_api.py -v
+
+# Run All API tests
+pytest api/tests -v
+```
+
+#### 3. Run Database Integrity Tests (PostgreSQL)
+```bash
+pytest database/tests -v
+```
+
+#### 4. Run End-to-End (E2E) Integration Journeys
+```bash
+pytest e2e/tests -v
+```
+
+#### 5. Run by Tag / Marker
+```bash
+# Run quick sanity smoke suite
 pytest -v -m "smoke"
 
-# Run Full Regression Suite
+# Run full regression suite
 pytest -v -m "regression"
 ```
 
 ---
 
-## 📊 6. Allure Test Reporting
+### ⚡ Part 4: Running Performance & Concurrency Load Tests
 
-Execution results are automatically captured in `reports/allure-results`.
-
-### View Live Report
+#### Option A: Standalone Python Benchmark (Instant Console Table)
+Simulates concurrent load (10, 50, and 100 virtual users) measuring TPS, average latency, and p95 latency percentiles:
 ```bash
-allure serve reports/allure-results
+python performance/run_performance_benchmark.py
 ```
 
-### Generate Static HTML Report
+#### Option B: Apache JMeter CLI / GUI
 ```bash
+# Run JMeter load test in non-GUI mode
+jmeter -n -t performance/chargewise_load_test.jmx -l performance/results.jtl -e -o performance/html_report
+```
+
+---
+
+### 📊 Part 5: Viewing Allure Interactive HTML Reports
+
+Execution results are automatically recorded in `reports/allure-results/`.
+
+```bash
+# 1. Install Allure CLI (if not already installed)
+# macOS (Homebrew): brew install allure
+# Windows (Scoop):  scoop install allure
+# NPM:              npm install -g allure-commandline
+
+# 2. View live interactive dashboard in browser
+allure serve reports/allure-results
+
+# 3. (Alternative) Generate standalone static HTML folder
 allure generate reports/allure-results -o reports/allure-report --clean
 allure open reports/allure-report
 ```
 
 ---
 
-## ⚡ 7. Performance Testing
-
-### Option A: Standalone Python Benchmark (No JMeter needed)
-```bash
-python performance/run_performance_benchmark.py
-```
-*Outputs a formatted table showing Throughput (RPS), Average Latency, and p95 Latencies across 10, 50, and 100 concurrent users.*
-
-### Option B: Apache JMeter GUI / CLI
-```bash
-# Run JMeter in Non-GUI mode
-jmeter -n -t performance/chargewise_load_test.jmx -l performance/results.jtl -e -o performance/html_report
-```
-
----
-
-## 🎓 8. College Viva & SDET Interview Defense Notes
+## 🎓 5. College Viva & SDET Interview Defense Notes
 
 ### Q1: Why is QA placed in a completely separate repository?
 > **Answer:** In professional SDET workflows, decoupling QA prevents circular dependency hell, allows independent CI/CD test schedules, enables testing across multiple environments (Dev, Staging, Production) without touching application build pipelines, and enforces strict black-box/gray-box testing principles.
