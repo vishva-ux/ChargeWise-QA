@@ -24,7 +24,7 @@ class TestBookingUI:
             login_page.login_via_modal()
 
     @allure.story("Open Reservation Drawer")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.severity("critical")
     @pytest.mark.smoke
     def test_tc_book_001_open_reservation_drawer(self, driver):
         """TC-BOOK-001: Validate clicking 'RESERVE SLOT' opens the reservation panel."""
@@ -38,7 +38,7 @@ class TestBookingUI:
             assert booking_page.is_booking_panel_open(), "Reservation drawer did not open"
 
     @allure.story("Payment Selection & Confirmation")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.severity("critical")
     def test_tc_book_004_complete_reservation_and_verify_qr_pass(self, driver):
         """TC-BOOK-004: Select payment method, secure reservation, and verify QR pass generation."""
         station_page = StationPage(driver)

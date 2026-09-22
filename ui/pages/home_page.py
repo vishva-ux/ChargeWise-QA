@@ -11,21 +11,20 @@ class HomePage(BasePage):
     """Page Object for ChargeWise Main Dashboard & Navigation."""
 
     # Header Elements
-    HEADER = (By.CSS_SELECTOR, "header, .mobile-canvas-frame header")
-    USER_PHONE_LABEL = (By.XPATH, "//header//*[contains(text(), '+91') or contains(text(), 'Fleet')]")
-    WALLET_BADGE = (By.XPATH, "//header//*[contains(text(), '₹') or contains(text(), '2,450')]")
-    PROFILE_BTN = (By.XPATH, "//header//button[.//img or contains(@aria-label, 'Profile') or contains(., '+91') or position()=1]")
-    NOTIFICATION_BTN = (By.XPATH, "//header//button[contains(@aria-label, 'Notifications') or .//*[name()='svg' and contains(@class, 'lucide-bell')]]")
+    HEADER = (By.CSS_SELECTOR, "header")
+    WALLET_BADGE = (By.XPATH, "//header//*[contains(text(), '₹')]")
+    PROFILE_BTN = (By.XPATH, "//header//button[@title='Account Profile & Logout' or .//*[name()='svg' and contains(@class, 'lucide-user')]]")
+    NOTIFICATION_BTN = (By.XPATH, "//header//button[@title='Notifications']")
 
     # AI Search Module
-    SEARCH_INPUT = (By.CSS_SELECTOR, "input[placeholder*='Ask ChargeWise AI'], input[placeholder*='Search']")
-    SEARCH_SUBMIT_BTN = (By.XPATH, "//input[contains(@placeholder, 'Ask')]/following-sibling::button | //button[contains(., 'Search') or .//*[name()='svg']]")
-    CURRENT_LOCATION_LABEL = (By.XPATH, "//*[contains(text(), 'Current Location') or contains(text(), 'T. Nagar')]")
+    SEARCH_INPUT = (By.CSS_SELECTOR, "input[placeholder*='Where to'], input[placeholder*='Ask']")
+    SEARCH_SUBMIT_BTN = (By.XPATH, "//button[@title='Search EV Stations' or @type='submit']")
+    FAST_CCS2_CHIP = (By.XPATH, "//button[contains(., 'Fast CCS2 Hubs')]")
+    ROUTE_CHIP = (By.XPATH, "//button[contains(., 'Chennai ➔ Blr Route')]")
 
     # Profile Drawer / Modal Elements
-    PROFILE_DRAWER = (By.XPATH, "//*[contains(text(), 'Driver Profile') or contains(text(), 'Fleet Driver')]")
-    LOGOUT_BTN = (By.XPATH, "//button[contains(., 'Sign Out') or contains(., 'Logout')]")
-    DRAWER_CLOSE_BTN = (By.XPATH, "//button[contains(., '✕') or .//*[name()='svg' and contains(@class, 'lucide-x')]]")
+    PROFILE_DRAWER = (By.XPATH, "//*[contains(text(), 'Rapido Driver Profile') or contains(text(), 'Driver Profile')]")
+    LOGOUT_BTN = (By.XPATH, "//button[contains(., 'LOGOUT') or contains(., 'Sign Out')]")
 
     # Map Canvas
     MAP_CONTAINER = (By.CSS_SELECTOR, ".leaflet-container, [id*='map'], .map-viewport")
@@ -46,6 +45,10 @@ class HomePage(BasePage):
         """Enters prompt into AI natural language search box and submits."""
         self.send_keys(self.SEARCH_INPUT, query)
         self.click(self.SEARCH_SUBMIT_BTN)
+
+    def click_fast_charger_chip(self) -> None:
+        """Clicks the Fast CCS2 Hubs preset chip."""
+        self.click(self.FAST_CCS2_CHIP)
 
     def open_profile(self) -> None:
         """Opens user profile drawer."""

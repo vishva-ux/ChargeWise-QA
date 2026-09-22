@@ -16,7 +16,7 @@ class TestAuthenticationUI:
     """Test Suite for User Sign-In, Credentials Validation, and Session Teardown."""
 
     @allure.story("Modal Login Flow")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.severity("critical")
     @pytest.mark.smoke
     def test_tc_auth_001_valid_modal_login(self, driver):
         """TC-AUTH-001: Validate successful login via phone authentication modal."""
@@ -36,7 +36,7 @@ class TestAuthenticationUI:
             assert "₹" in balance or "2,450" in balance or len(balance) > 0
 
     @allure.story("Dedicated Auth Form")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.severity("critical")
     def test_tc_auth_003_standard_user_credentials_login(self, driver):
         """TC-AUTH-003: Validate sign-in using standard user username and password on /auth."""
         login_page = LoginPage(driver)
@@ -55,7 +55,7 @@ class TestAuthenticationUI:
             assert driver.current_url is not None
 
     @allure.story("Negative Authentication")
-    @allure.severity(allure.severity_level.HIGH)
+    @allure.severity("critical")
     def test_tc_auth_005_invalid_password_rejection(self, driver):
         """TC-AUTH-005: Verify system rejects incorrect password with proper error feedback."""
         login_page = LoginPage(driver)
@@ -71,7 +71,7 @@ class TestAuthenticationUI:
             assert len(error_text) > 0, "Expected error alert was not displayed for invalid credentials"
 
     @allure.story("Profile & Logout")
-    @allure.severity(allure.severity_level.HIGH)
+    @allure.severity("critical")
     def test_tc_auth_007_user_logout_flow(self, driver):
         """TC-AUTH-007: Verify driver can open profile drawer and execute logout."""
         login_page = LoginPage(driver)

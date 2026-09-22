@@ -13,7 +13,7 @@ class TestMLEngineAPI:
     """Test Suite for FastAPI ML Inference Endpoints (:8000)."""
 
     @allure.story("ML Service Health Check")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.severity("critical")
     @pytest.mark.smoke
     def test_tc_rout_001_ml_health_check(self, ml_client):
         """TC-ROUT-001: Validate FastAPI service health and loaded models."""
@@ -27,7 +27,7 @@ class TestMLEngineAPI:
             assert data.get("service") == "ChargeWise-ML-Engine"
 
     @allure.story("Wait Time Prediction")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.severity("critical")
     def test_tc_rout_002_predict_waiting_time(self, ml_client):
         """TC-ROUT-002: Request queue wait-time prediction from ML model."""
         with allure.step("POST /predict/waiting-time with realistic occupancy"):
@@ -44,7 +44,7 @@ class TestMLEngineAPI:
             assert "predicted_wait_minutes" in data or "estimated_wait" in data or isinstance(data, (dict, float, int))
 
     @allure.story("Battery Aware Recommendations")
-    @allure.severity(allure.severity_level.HIGH)
+    @allure.severity("critical")
     def test_tc_rout_003_battery_aware_recommendation(self, ml_client):
         """TC-ROUT-003: Request battery-aware stop optimization for long trip."""
         with allure.step("POST /recommend/battery-aware"):
@@ -58,7 +58,7 @@ class TestMLEngineAPI:
             assert response.status_code in [200, 422]
 
     @allure.story("Peak Hour Demand Prediction")
-    @allure.severity(allure.severity_level.MEDIUM)
+    @allure.severity("normal")
     def test_tc_rout_004_peak_hour_demand(self, ml_client):
         """TC-ROUT-004: Query peak hour congestion multiplier."""
         with allure.step("POST /predict/peak-hours for 6 PM peak"):
@@ -68,7 +68,7 @@ class TestMLEngineAPI:
             assert response.status_code == 200
 
     @allure.story("ML Input Boundary Validation")
-    @allure.severity(allure.severity_level.MEDIUM)
+    @allure.severity("normal")
     def test_tc_rout_006_negative_soc_validation(self, ml_client):
         """TC-ROUT-006: Ensure Pydantic rejects out-of-bound SOC with 422."""
         with allure.step("POST /recommend/battery-aware with invalid SOC 150%"):

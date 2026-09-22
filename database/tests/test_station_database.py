@@ -13,7 +13,7 @@ class TestStationDatabase:
     """Test Suite for Stations spatial columns, seed record counts, and indexes."""
 
     @allure.story("PostGIS Geometry Verification")
-    @allure.severity(allure.severity_level.HIGH)
+    @allure.severity("critical")
     def test_tc_db_002_stations_postgis_geometry(self, db_client, is_db_available):
         """TC-DB-002: Verify stations table utilizes PostGIS Point geometry with SRID 4326."""
         if not is_db_available:
@@ -31,7 +31,7 @@ class TestStationDatabase:
                 assert geo_info[0]["srid"] == 4326
 
     @allure.story("Seed Station Record Count")
-    @allure.severity(allure.severity_level.LOW)
+    @allure.severity("minor")
     def test_tc_db_006_seed_stations_count(self, db_client, is_db_available):
         """TC-DB-006: Verify database contains initialized seed charging stations."""
         if not is_db_available:

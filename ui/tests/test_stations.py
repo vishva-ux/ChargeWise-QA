@@ -24,7 +24,7 @@ class TestStationsUI:
             login_page.login_via_modal()
 
     @allure.story("Station List Display")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.severity("critical")
     @pytest.mark.smoke
     def test_tc_stat_002_station_list_rendering(self, driver):
         """TC-STAT-002: Verify bottom sheet renders charging station cards."""
@@ -35,7 +35,7 @@ class TestStationsUI:
             assert count >= 1, f"Expected at least 1 station card rendered, found {count}"
 
     @allure.story("AI Conversational Search")
-    @allure.severity(allure.severity_level.HIGH)
+    @allure.severity("critical")
     def test_tc_stat_004_ai_search_fast_charger_filter(self, driver):
         """TC-STAT-004: Verify AI conversational search filters list by high power (>60kW)."""
         home_page = HomePage(driver)
@@ -49,7 +49,7 @@ class TestStationsUI:
             assert count >= 1, "No stations returned for fast charger filter"
 
     @allure.story("AI Search Reset")
-    @allure.severity(allure.severity_level.MEDIUM)
+    @allure.severity("normal")
     def test_tc_stat_006_reset_search_filters(self, driver):
         """TC-STAT-006: Verify resetting AI search restores full station catalog."""
         home_page = HomePage(driver)

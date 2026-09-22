@@ -14,7 +14,7 @@ class TestAuthAPI:
     """Test Suite for Authentication REST API endpoints."""
 
     @allure.story("User Login API")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.severity("critical")
     @pytest.mark.smoke
     def test_tc_auth_api_001_valid_login(self, auth_client):
         """Verify login endpoint accepts valid credentials."""
@@ -26,7 +26,7 @@ class TestAuthAPI:
             assert response.status_code in [200, 404], f"Unexpected status: {response.status_code}"
 
     @allure.story("Negative Authentication")
-    @allure.severity(allure.severity_level.HIGH)
+    @allure.severity("critical")
     def test_tc_auth_api_002_invalid_credentials(self, auth_client):
         """Verify login endpoint rejects bad credentials with proper error code."""
         with allure.step("Dispatch login with incorrect password"):

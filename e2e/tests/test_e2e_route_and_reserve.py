@@ -18,7 +18,7 @@ class TestE2EAISearchAndReserve:
     """E2E User Journey: Natural Language Query -> Filtered Reservation."""
 
     @allure.story("E2E-002: AI Filter to Reservation")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.severity("critical")
     def test_e2e_002_ai_search_and_reserve(self, driver):
         """
         E2E-002: Filter stations by AI conversational query and reserve the top recommended node.

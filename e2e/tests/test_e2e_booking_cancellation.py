@@ -15,7 +15,7 @@ class TestE2EBookingCancellation:
     """E2E Lifecycle: Slot Reservation followed by Cancellation and Slot Release."""
 
     @allure.story("E2E-003: Reservation and Cancellation Cycle")
-    @allure.severity(allure.severity_level.HIGH)
+    @allure.severity("critical")
     def test_e2e_003_reserve_and_cancel_lifecycle(self, e2e_booking_api, e2e_station_api):
         """
         E2E-003: Execute slot reservation via backend API and verify cancellation lifecycle.

@@ -11,21 +11,21 @@ class StationPage(BasePage):
     """Page Object for station discovery, cards, and bottom sheet list."""
 
     # Bottom Sheet Elements
-    BOTTOM_SHEET = (By.XPATH, "//*[contains(@class, 'bottom-sheet') or contains(@class, 'rounded-t-3xl') or contains(., 'Available Stations')]")
-    STATION_CARDS = (By.XPATH, "//div[contains(@class, 'rounded-2xl') and (.//*[contains(text(), 'kW')] or .//*[contains(text(), '₹')])]")
-    FIRST_STATION_TITLE = (By.XPATH, "(//div[contains(@class, 'rounded-2xl')]//h3 | //div[contains(@class, 'rounded-2xl')]//h4 | //div[contains(@class, 'rounded-2xl')]//span[contains(@class, 'font-bold')])[1]")
+    BOTTOM_SHEET = (By.XPATH, "//*[contains(text(), 'Nearby Charging Hubs') or contains(@class, 'rounded-t-3xl')]")
+    STATION_CARDS = (By.XPATH, "//div[contains(@class, 'rounded-2xl') and (.//*[contains(text(), 'kW')] or .//*[contains(text(), 'BOOK SLOT')])]")
+    FIRST_STATION_TITLE = (By.XPATH, "(//div[contains(@class, 'rounded-2xl')]//h4)[1]")
     
     # Card Specific Actions
-    RESERVE_BTN = (By.XPATH, "//button[contains(., 'RESERVE SLOT') or contains(., 'Book') or contains(., 'Reserve')]")
-    RESET_FILTER_BTN = (By.XPATH, "//button[contains(., 'Reset') or contains(., 'Clear')]")
-    AI_FILTER_BADGE = (By.XPATH, "//*[contains(text(), 'AI Filter') or contains(text(), 'Showing')]")
+    BOOK_SLOT_BTN = (By.XPATH, "(//button[contains(., 'BOOK SLOT') or contains(., 'RESERVE')])[1]")
+    RESET_FILTER_BTN = (By.XPATH, "//button[contains(text(), 'Clear') or contains(text(), 'Reset')]")
+    AI_FILTER_BANNER = (By.XPATH, "//*[contains(text(), 'Route Optimizer Summary') or contains(text(), 'AI Filter')]")
 
     def __init__(self, driver: WebDriver):
         super().__init__(driver)
 
     def get_station_count(self) -> int:
         """Returns the number of station cards currently rendered."""
-        cards = self.find_elements(self.STATION_CARDS, timeout=6)
+        cards = self.find_elements(self.STATION_CARDS, timeout=8)
         return len(cards)
 
     def select_station_by_name(self, name: str) -> None:
@@ -34,8 +34,8 @@ class StationPage(BasePage):
         self.click(locator)
 
     def click_reserve_on_first_station(self) -> None:
-        """Clicks the RESERVE SLOT button on the currently active station card."""
-        self.click(self.RESERVE_BTN)
+        """Clicks the BOOK SLOT button on the first station card."""
+        self.click(self.BOOK_SLOT_BTN)
 
     def reset_ai_filter(self) -> None:
         """Resets conversational AI filter if active."""

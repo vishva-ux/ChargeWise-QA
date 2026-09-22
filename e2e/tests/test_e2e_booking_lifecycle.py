@@ -19,7 +19,7 @@ class TestE2EBookingLifecycle:
     """E2E User Journey: Discovery to Confirmed QR Reservation."""
 
     @allure.story("E2E-001: Discovery to QR Pass Flow")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.severity("critical")
     @pytest.mark.smoke
     def test_e2e_001_complete_booking_journey(self, driver, e2e_station_api, e2e_booking_api):
         """

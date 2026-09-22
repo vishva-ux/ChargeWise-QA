@@ -14,7 +14,7 @@ class TestBookingAPI:
     """Test Suite for /api/v1/bookings endpoints."""
 
     @allure.story("Atomic Slot Reservation")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.severity("critical")
     @pytest.mark.smoke
     def test_tc_book_api_001_reserve_slot_success(self, booking_client):
         """TC-BOOK-003: Successfully reserve slot via Redisson lock."""
@@ -37,7 +37,7 @@ class TestBookingAPI:
             assert data.get("stationId") == station_id
 
     @allure.story("Negative Booking - Invalid Payload")
-    @allure.severity(allure.severity_level.HIGH)
+    @allure.severity("critical")
     def test_tc_book_api_002_missing_station_id(self, booking_client):
         """Verify reservation with null stationId returns appropriate response without crashing."""
         with allure.step("Send reservation with empty payload"):
@@ -47,7 +47,7 @@ class TestBookingAPI:
             assert response.status_code in [200, 400], f"Expected 200/400, got {response.status_code}"
 
     @allure.story("Concurrent Reservation Simulation")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.severity("critical")
     def test_tc_book_api_003_concurrent_reservation_dispatch(self, booking_client):
         """TC-BOOK-008: Dispatch back-to-back reservation requests to test distributed lock integrity."""
         with allure.step("Send primary reservation request"):

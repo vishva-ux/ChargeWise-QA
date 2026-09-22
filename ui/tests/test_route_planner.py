@@ -14,7 +14,7 @@ class TestRoutePlannerUI:
     """Test Suite for EV Trip Calculation, Battery SOC, and Stop Recommendations."""
 
     @allure.story("Smart Route Calculation")
-    @allure.severity(allure.severity_level.HIGH)
+    @allure.severity("critical")
     def test_tc_rout_005_plan_ev_smart_route(self, driver):
         """TC-ROUT-005: Plan an EV route and verify calculation execution."""
         route_page = RoutePage(driver)

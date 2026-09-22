@@ -13,7 +13,7 @@ class TestStationAPI:
     """Test Suite for /api/v1/stations endpoints."""
 
     @allure.story("Nearby Station Discovery")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.severity("critical")
     @pytest.mark.smoke
     def test_tc_stat_api_001_get_nearby_stations(self, station_client):
         """TC-STAT-001: Fetch stations using coordinates around Chennai corridor."""
@@ -35,7 +35,7 @@ class TestStationAPI:
             assert "pricePerKwh" in first_station, "Station object missing 'pricePerKwh'"
 
     @allure.story("Default Query Parameters")
-    @allure.severity(allure.severity_level.MEDIUM)
+    @allure.severity("normal")
     def test_tc_stat_api_002_default_parameters(self, station_client):
         """Verify endpoint works with default parameters."""
         with allure.step("Send GET /api/v1/stations/nearby with no params"):
@@ -47,7 +47,7 @@ class TestStationAPI:
             assert len(stations) >= 1
 
     @allure.story("Boundary Values")
-    @allure.severity(allure.severity_level.LOW)
+    @allure.severity("minor")
     def test_tc_stat_api_003_extreme_coordinates(self, station_client):
         """Verify API handles extreme float coordinates without crashing."""
         with allure.step("Send GET with boundary coordinates"):

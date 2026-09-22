@@ -6,7 +6,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException, InvalidElementStateException
 import logging
 
 logger = logging.getLogger(__name__)
@@ -87,7 +87,10 @@ class BasePage:
         """Waits for element, optionally clears, and sends keys."""
         element = self.find_element(locator)
         if clear_first:
-            element.clear()
+            try:
+                element.clear()
+            except InvalidElementStateException:
+                pass
         element.send_keys(text)
         logger.debug(f"Entered text '{text}' into element: {locator}")
 

@@ -13,7 +13,7 @@ class TestBookingDatabase:
     """Test Suite for Bookings table structure, relations, and transactional state."""
 
     @allure.story("Users Table Schema Validation")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.severity("critical")
     @pytest.mark.smoke
     def test_tc_db_001_users_table_schema(self, db_client, is_db_available):
         """TC-DB-001: Verify users table columns, primary key, and uniqueness."""
@@ -37,7 +37,7 @@ class TestBookingDatabase:
             assert "role" in col_names
 
     @allure.story("Chargers Foreign Key Integrity")
-    @allure.severity(allure.severity_level.HIGH)
+    @allure.severity("critical")
     def test_tc_db_003_chargers_foreign_keys(self, db_client, is_db_available):
         """TC-DB-003: Verify chargers table enforces foreign key link to stations."""
         if not is_db_available:
@@ -61,7 +61,7 @@ class TestBookingDatabase:
             assert "station_id" in fk_columns, "Foreign key constraint on station_id missing"
 
     @allure.story("Unique QR Code Token Constraint")
-    @allure.severity(allure.severity_level.MEDIUM)
+    @allure.severity("normal")
     def test_tc_db_005_bookings_qr_unique_constraint(self, db_client, is_db_available):
         """TC-DB-005: Verify bookings table enforces unique constraint on qr_code_token."""
         if not is_db_available:
