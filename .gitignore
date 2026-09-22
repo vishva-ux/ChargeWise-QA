@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & QA Artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+reports/allure-results/*
+!reports/allure-results/.gitkeep
+reports/allure-report/
+reports/screenshots/*
+!reports/screenshots/.gitkeep
+test-results/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Performance Test Outputs
+performance/results/
+performance/*.jtl
+performance/*.log

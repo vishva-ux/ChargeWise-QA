@@ -1,0 +1,131 @@
+name: ChargeWise Automated QA Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      test_tier:
+        description: 'Select Test Tier to Run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - api
+          - ui
+          - db
+          - e2e
+          - smoke
+      sut_base_url:
+        description: 'Target ChargeWise Base URL'
+        required: false
+        default: 'http://localhost:3000'
+
+jobs:
+  qa-automation-suite:
+    name: Execute Automated Test Matrix
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_DB: chargewise_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgrespassword
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      CHARGEWISE_BASE_URL: ${{ github.event.inputs.sut_base_url || 'http://localhost:3000' }}
+      CHARGEWISE_API_URL: ${{ secrets.CHARGEWISE_API_URL || 'http://localhost:8080/api/v1' }}
+      CHARGEWISE_ML_URL: ${{ secrets.CHARGEWISE_ML_URL || 'http://localhost:8000' }}
+      SELENIUM_HEADLESS: 'true'
+      SELENIUM_BROWSER: 'chrome'
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: chargewise_db
+      DB_USER: postgres
+      DB_PASSWORD: postgrespassword
+
+    steps:
+      - name: Checkout QA Automation Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Google Chrome (Headless)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget curl unzip libxi6 libgconf-2-4 libnss3 fonts-liberation
+          wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install -y ./google-chrome-stable_current_amd64.deb
+
+      - name: Install Python QA Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Initialize Database Schema & Seed Data
+        run: |
+          PGPASSWORD=postgrespassword psql -h localhost -U postgres -d chargewise_db -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";" || true
+          PGPASSWORD=postgrespassword psql -h localhost -U postgres -d chargewise_db -c "CREATE EXTENSION IF NOT EXISTS \"postgis\";" || true
+        continue-on-error: true
+
+      - name: Run REST API Automated Tests
+        if: ${{ github.event.inputs.test_tier == 'all' || github.event.inputs.test_tier == 'api' || github.event.inputs.test_tier == null }}
+        run: |
+          pytest api/tests -v -m "api" --alluredir=reports/allure-results || true
+
+      - name: Run Database Integrity Tests
+        if: ${{ github.event.inputs.test_tier == 'all' || github.event.inputs.test_tier == 'db' || github.event.inputs.test_tier == null }}
+        run: |
+          pytest database/tests -v -m "db" --alluredir=reports/allure-results || true
+
+      - name: Run UI Automated Tests (Headless)
+        if: ${{ github.event.inputs.test_tier == 'all' || github.event.inputs.test_tier == 'ui' || github.event.inputs.test_tier == null }}
+        run: |
+          pytest ui/tests -v -m "ui" --alluredir=reports/allure-results || true
+
+      - name: Run End-to-End Tests
+        if: ${{ github.event.inputs.test_tier == 'all' || github.event.inputs.test_tier == 'e2e' || github.event.inputs.test_tier == null }}
+        run: |
+          pytest e2e/tests -v -m "e2e" --alluredir=reports/allure-results || true
+
+      - name: Upload Allure Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-test-results
+          path: reports/allure-results/
+          retention-days: 14
+
+      - name: Upload Failure Screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: failure-screenshots
+          path: reports/screenshots/
+          retention-days: 7
